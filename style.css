@@ -61,7 +61,7 @@ body.overlay-active {
 .container {
     width: calc(100% - 300px);  /* Match the sidebar width */
     max-width: 800px;
-    padding: 20px;
+    padding: 10px;  /* Reduced from 20px */
     padding-top: 48px;
     box-sizing: border-box;
     display: flex;
@@ -79,7 +79,7 @@ body.overlay-active {
 
 h1 {
     font-size: 2.5rem;
-    margin-bottom: 30px;
+    margin-bottom: 15px;  /* Reduced from 30px */
     color: #ececf1;
     font-weight: 600;
     text-align: center;
@@ -108,7 +108,7 @@ h1::after {
 .note-form-container {
     width: 100%;
     max-width: 600px;
-    padding: 24px;
+    padding: 12px;  /* Reduced from 24px */
     padding-top: 0;
     box-sizing: border-box;
     margin: 0 auto;
@@ -118,7 +118,7 @@ h1::after {
     background-color: #2a2b32;
     border: 2px solid #565869;
     border-radius: 16px;
-    padding: 20px;
+    padding: 16px;  /* Reduced from 20px */
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
     width: 100%;

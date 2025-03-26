@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "gh-pages": "^6.3.0"
+  },
+  "dependencies": {
+    "firebase": "^11.5.0"
   }
 }

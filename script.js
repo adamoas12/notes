@@ -1,3 +1,6 @@
+import { database } from './firebase-config.js';
+import { ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
 // Get the elements
 const saveButton = document.getElementById("saveButton");
 const noteNameInput = document.getElementById("noteName");
@@ -24,15 +27,21 @@ const saveEditBtn = document.getElementById("saveEditBtn");
 
 let currentNoteIndex = -1;
 
-// Load saved notes from localStorage
-let savedNotes = JSON.parse(localStorage.getItem("samples")) || [];
-// Convert existing notes to include favorite property if they don't have it
-savedNotes = savedNotes.map(note => ({
-    ...note,
-    favorite: note.favorite || false
-}));
+// Initialize notes array
+let savedNotes = [];
 
-renderNotes(savedNotes);
+// Reference to notes in Firebase
+const notesRef = ref(database, 'notes');
+
+// Listen for changes in Firebase
+onValue(notesRef, (snapshot) => {
+    const data = snapshot.val();
+    savedNotes = data ? Object.entries(data).map(([id, note]) => ({
+        ...note,
+        id: id
+    })) : [];
+    renderNotes(savedNotes);
+});
 
 // Add search functionality
 searchInput.addEventListener('input', (e) => {
@@ -56,20 +65,41 @@ noteTextInput.addEventListener('input', function() {
     this.style.height = (this.scrollHeight) + 'px';
 });
 
+// Function to generate auto title from note content
+function generateAutoTitle(content) {
+    // Get the first line or first few words
+    const words = content.trim().split(/\s+/);
+    const firstLine = content.split('\n')[0].trim();
+    
+    // If first line is short enough, use it as title
+    if (firstLine.length <= 30) {
+        return firstLine;
+    }
+    
+    // Otherwise take first 3-5 words
+    return words.slice(0, words.length > 4 ? 4 : 3).join(' ') + '...';
+}
+
 // Save the note
 saveButton.addEventListener("click", () => {
-    const noteName = noteNameInput.value.trim();
+    let noteName = noteNameInput.value.trim();
     const noteText = noteTextInput.value.trim();
 
-    if (noteName && noteText) {
+    if (noteText) {
+        // Generate auto title if user didn't provide one
+        if (!noteName) {
+            noteName = generateAutoTitle(noteText);
+        }
+
         const newNote = { 
             name: noteName, 
             text: noteText,
-            favorite: false 
+            favorite: false,
+            timestamp: Date.now()
         };
-        savedNotes.push(newNote);
-        localStorage.setItem("samples", JSON.stringify(savedNotes));
-        renderNotes(savedNotes);
+        
+        // Push new note to Firebase
+        push(notesRef, newNote);
 
         // Clear input fields
         noteNameInput.value = "";
@@ -85,16 +115,17 @@ sidebarToggle.addEventListener("click", () => {
 
 // Delete a note
 function deleteNote(index) {
-    savedNotes.splice(index, 1);
-    localStorage.setItem("samples", JSON.stringify(savedNotes));
-    renderNotes(savedNotes);
+    const noteId = savedNotes[index].id;
+    remove(ref(database, `notes/${noteId}`));
 }
 
 // Toggle favorite status
 function toggleFavorite(index) {
-    savedNotes[index].favorite = !savedNotes[index].favorite;
-    localStorage.setItem("samples", JSON.stringify(savedNotes));
-    renderNotes(savedNotes);
+    const noteId = savedNotes[index].id;
+    const note = savedNotes[index];
+    update(ref(database, `notes/${noteId}`), {
+        favorite: !note.favorite
+    });
 }
 
 // Overlay control functions
@@ -137,8 +168,10 @@ saveEditBtn.addEventListener("click", () => {
     if (currentNoteIndex >= 0) {
         const updatedText = editNoteContent.value.trim();
         if (updatedText) {
-            savedNotes[currentNoteIndex].text = updatedText;
-            localStorage.setItem("samples", JSON.stringify(savedNotes));
+            const noteId = savedNotes[currentNoteIndex].id;
+            update(ref(database, `notes/${noteId}`), {
+                text: updatedText
+            });
             noteContent.textContent = updatedText;
             viewMode.style.display = "block";
             editMode.classList.add("hidden");
