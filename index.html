@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Saver</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <div class="sidebar" id="sidebar">
+            <div class="search-container">
+                <input type="text" id="searchNotes" placeholder="Search notes..." class="search-input">
+            </div>
+            <div class="notes-sections">
+                <div class="favorites-section">
+                    <h3>Favorites</h3>
+                    <div class="note-list" id="favoriteNoteList"></div>
+                </div>
+                <div class="all-notes-section">
+                    <h3>All Notes</h3>
+                    <div class="note-list" id="noteList"></div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <nav class="top-nav">
+                <div class="nav-group">
+                    <button id="sidebarToggle" class="nav-button" title="Toggle Sidebar">
+                        <i class="far fa-file-lines"></i>
+                    </button>
+                    <button id="newNoteBtn" class="nav-button" title="New Note">
+                        <i class="fas fa-pencil"></i>
+                    </button>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="content-center">
+                    <h1>Personal Note Saver</h1>
+                    <div class="note-form-container">
+                        <div class="note-form">
+                            <input type="text" id="noteName" placeholder="Note title">
+                            <div class="input-container">
+                                <textarea id="noteText" placeholder="Type your note here..."></textarea>
+                                <button id="saveButton" class="send-button">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Note Editor Overlay -->
+    <div class="note-editor-overlay" id="noteEditorOverlay">
+        <div class="note-editor-content">
+            <div class="note-editor-header">
+                <h2 id="overlayNoteTitle"></h2>
+                <div class="note-editor-actions">
+                    <button class="editor-button" id="copyNoteBtn" title="Copy note">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="editor-button" id="editNoteBtn" title="Edit note">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="editor-button close-button" id="closeEditorBtn" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="note-editor-body">
+                <div class="view-mode" id="viewMode">
+                    <pre id="noteContent"></pre>
+                </div>
+                <div class="edit-mode hidden" id="editMode">
+                    <textarea id="editNoteContent"></textarea>
+                    <button class="save-edit-button" id="saveEditBtn">
+                        <i class="fas fa-check"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
