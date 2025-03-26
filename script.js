@@ -56,12 +56,32 @@ noteTextInput.addEventListener('input', function() {
     this.style.height = (this.scrollHeight) + 'px';
 });
 
+// Function to generate auto title from note content
+function generateAutoTitle(content) {
+    // Get the first line or first few words
+    const words = content.trim().split(/\s+/);
+    const firstLine = content.split('\n')[0].trim();
+    
+    // If first line is short enough, use it as title
+    if (firstLine.length <= 30) {
+        return firstLine;
+    }
+    
+    // Otherwise take first 3-5 words
+    return words.slice(0, words.length > 4 ? 4 : 3).join(' ') + '...';
+}
+
 // Save the note
 saveButton.addEventListener("click", () => {
-    const noteName = noteNameInput.value.trim();
+    let noteName = noteNameInput.value.trim();
     const noteText = noteTextInput.value.trim();
 
-    if (noteName && noteText) {
+    if (noteText) {
+        // Generate auto title if user didn't provide one
+        if (!noteName) {
+            noteName = generateAutoTitle(noteText);
+        }
+
         const newNote = { 
             name: noteName, 
             text: noteText,
